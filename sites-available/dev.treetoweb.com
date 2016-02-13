@@ -1,4 +1,9 @@
 
+    map $http_upgrade $connection_upgrade {
+        default upgrade;
+        ''      close;
+    }
+
 server {
 
 	root /home/www/dev.treetoweb.com;
@@ -7,11 +12,12 @@ server {
 	server_name dev.treetoweb.com;
 
 	location / {
-		proxy_pass http://127.0.0.1:3000;    
+	proxy_pass http://127.0.0.1:3000;    
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
+	proxy_set_header Connection $connection_upgrade;
         proxy_set_header Host $host;
+	proxy_set_header X-Forwarded-For $remote_addr;
         proxy_cache_bypass $http_upgrade;
 	}
     access_log /home/www/shared/log/dev.treetoweb-access.log;
